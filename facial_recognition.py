@@ -143,7 +143,7 @@ import numpy as np
 
 # Get a reference to webcam #0 (the default one)
 rtsp_url = 'rtsp://ewdamron:Banana123@192.168.5.224:554/stream1'
-cap = cv2.VideoCapture(rtsp_url)
+video_capture = cv2.VideoCapture(rtsp_url)
 
 # Load a sample picture and learn how to recognize it.
 obama_image = face_recognition.load_image_file("obama.jpg")
@@ -180,10 +180,13 @@ while True:
 
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         rgb_small_frame = small_frame[:, :, ::-1]
-
+        assert rgb_small_frame.dtype == np.uint8, "Image must be of type uint8"
         # Find all the faces and face encodings in the current frame of video
         face_locations = face_recognition.face_locations(rgb_small_frame)
-        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        if face_locations:
+            face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        else:
+            face_encodings = []
 
         face_names = []
         for face_encoding in face_encodings:
