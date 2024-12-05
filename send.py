@@ -1,29 +1,23 @@
-import smtplib 
-from email.message import EmailMessage
-import ssl
+import yagmail
 
 def send_email(image_path, recipient_email):
-    sender_email = "fasteenchet23@gmail.com"
-    sendgrid_password = "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"
-    subject = "Person Detected"
-    body = "A person has been detected, see the attached image."
+    yagmail.register('evandamron14@gmail.com', 'REDACTED')    # Replace with your email and password
+    # Initialize Yagmail client
+    yag = yagmail.SMTP('evandamron14@gmail.com')  # Replace with your email
 
-    msg = EmailMessage()
-    msg['Subject'] = subject
-    msg['From'] = sender_email
-    msg['To'] = recipient_email
-    msg.set_content(body)
+    # Email details
+    subject = "Unknown Person Detected"
+    body = "An unknown person has been detected, see the attached image."
 
-    with open(image_path, 'rb') as img:
-        msg.add_attachment(img.read(), maintype='image', subtype='jpeg', filename='person.jpg')
+    # Send the email
+    yag.send(
+        to=recipient_email,
+        subject=subject,
+        contents=body,
+        attachments=image_path  # Attach the image
+    )
+    print("Email sent successfully!")
 
-    context = ssl.create_default_context()
-    with smtplib.SMTP('smtp.sendgrid.net', 587) as server:
-        server.starttls(context=context)
-        server.login("apikey", sendgrid_password)
-        server.send_message(msg)
-
-# Example usage
-# detect_and_notify("recipient_email@example.com")
-image_path = "IMG_3782.jpg"
-send_email(image_path, "rcgoodman18@gmail.com")
+if __name__ == "__main__":
+    # Example usage
+    send_email("captures/image_20241205_124650.jpg", "evandamron14@gmail.com")
